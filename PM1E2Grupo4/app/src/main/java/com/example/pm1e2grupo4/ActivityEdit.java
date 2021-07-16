@@ -1,6 +1,7 @@
-package com.example.pm1e1grupo4;
+package com.example.pm1e2grupo4;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -12,10 +13,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -34,87 +36,129 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class ActivityEdit extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PETICION_ACCESO_PERMISOS = 100;
-
-    ImageView imgFoto;
-    EditText txtNombreContacto, txtTelefonoContacto;
-    TextView txtLatitud, txtLongitud;
-
-    Contacto contacto;
     byte[] byteArray;
+
+    private String id;
+    EditText txtNombre, txtTelefono;
+    TextView txtLatitud, txtLongitud;
+    ImageView imgFoto2;
+    Contacto contactoBuscado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_edit);
 
-        imgFoto = (ImageView) findViewById(R.id.imgFoto);
-        txtNombreContacto = (EditText) findViewById(R.id.txtNombreContacto);
-        txtTelefonoContacto = (EditText) findViewById(R.id.txtTelefonoContacto);
-        txtLatitud = (TextView) findViewById(R.id.txtLatitud);
-        txtLongitud = (TextView) findViewById(R.id.txtLongitud);
-        Button btnTomarFoto = (Button) findViewById(R.id.btnTomarFoto);
-        Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
-        Button btnListarContactos = (Button) findViewById(R.id.btnListarContactos);
-        contacto = new Contacto("","","","","","");
-        checkGPS();
+        Button btnVolver2 = (Button) findViewById(R.id.btnVolver2);
+        Button btnActualizarFoto = (Button) findViewById(R.id.btnActualizarFoto);
+        Button btnActualizar = (Button) findViewById(R.id.btnActualizar);
+        Button btnEliminar = (Button) findViewById(R.id.btnEliminar);
+        txtNombre = (EditText) findViewById(R.id.txtNombreContacto2);
+        txtTelefono = (EditText) findViewById(R.id.txtTelefonoContacto2);
+        imgFoto2 = (ImageView) findViewById(R.id.imgFoto);
+        txtLongitud = (TextView) findViewById(R.id.txtLatitudContacto2);
+        txtLatitud = (TextView) findViewById(R.id.txtLongitudContacto2);
 
-        //BOTON TOMAR FOTO
-        btnTomarFoto.setOnClickListener(new View.OnClickListener() {
+        Intent intent = getIntent();
+        id = intent.getStringExtra("idCont");
+        buscarContacto(id);
+
+        btnActualizarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 permisos();
             }
         });
 
-        //BOTON SALVAR CONTACTO
-        btnSalvar.setOnClickListener(new View.OnClickListener() {
+        btnActualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                agregarContacto();
+                actualizarContacto();
             }
         });
 
-
-        //BOTON LISTAR CONTACTOS
-        btnListarContactos.setOnClickListener(new View.OnClickListener() {
+        btnVolver2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(getApplicationContext(), ActivityListContactos.class);
-                //startActivity(intent);
+                Intent pantallaVolver = new Intent(getApplicationContext(), ActivityListContactos.class);
+                startActivity(pantallaVolver);
             }
         });
+    }
 
+    private void buscarContacto(String id) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = RestApiMethods.ApiGetID + id;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    JSONArray ContactoArray = obj.getJSONArray("Contactos");
+
+                    for (int i = 0; i < ContactoArray.length(); i++) {
+                        //getting the json object of the particular index inside the array
+                        JSONObject contactoObject = ContactoArray.getJSONObject(i);
+
+                        //creating a hero object and giving them the values from json object
+                        contactoBuscado = new Contacto(contactoObject.getString("ID"),
+                                contactoObject.getString("NOMBRE"),
+                                contactoObject.getString("TELEFONO"),
+                                contactoObject.getString("LATITUD"),
+                                contactoObject.getString("LONGITUD"),
+                                contactoObject.getString("FOTO"),
+                                contactoObject.getString("ARCHIVO"));
+
+                    }
+
+                    byte[] foto = Base64.decode(contactoBuscado.getFoto().getBytes(), Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(foto, 0, foto.length);
+                    imgFoto2.setImageBitmap(bitmap);
+
+                    txtNombre.setText(contactoBuscado.getNombre());
+                    txtTelefono.setText(contactoBuscado.getTelefono());
+                    txtLongitud.setText(contactoBuscado.getLongitud());
+                    txtLatitud.setText(contactoBuscado.getLatitud());
+
+                } catch (JSONException ex) {
+                    Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("Error en Response", "onResponse: " +  error.getMessage().toString() );
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     //FUNCIONES REALCIONADAS A LA TOMA DE LA FOTOGRAFIA
     private void permisos() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PETICION_ACCESO_PERMISOS);
+            ActivityCompat.requestPermissions(ActivityEdit.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PETICION_ACCESO_PERMISOS);
         } else {
             tomarFoto();
-        }
-    }
-
-    private void checkGPS(){
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-        if(!provider.contains("gps")){
-            mostrarDialogoGPSInactivo();
         }
     }
 
@@ -140,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getBytes(Intent data) {
         Bitmap photo = (Bitmap) data.getExtras().get("data");
-        imgFoto.setImageBitmap(photo);
+        imgFoto2.setImageBitmap(photo);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byteArray = stream.toByteArray();
@@ -148,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
         //SETEO DE DATOS EN EL OBJETO (FOTO BASE64 Y NOMBRE DEL ARCHIVO)
         String encode = Base64.encodeToString(byteArray, Base64.DEFAULT);
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        contacto.setFoto(encode);
-        contacto.setArchivo(currentDateTimeString);
+        contactoBuscado.setFoto(encode);
+        contactoBuscado.setArchivo(currentDateTimeString);
         obtenerLocalizacion();
     }
 
@@ -179,8 +223,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onLocationChanged(Location location) {
                             String longitud = String.valueOf(location.getLongitude());
                             String latitud = String.valueOf(location.getLatitude());
-                            contacto.setLongitud(longitud);
-                            contacto.setLatitud(latitud);
+                            contactoBuscado.setLongitud(longitud);
+                            contactoBuscado.setLatitud(latitud);
                             txtLongitud.setText(longitud);
                             txtLatitud.setText(latitud);
                         }
@@ -199,37 +243,49 @@ public class MainActivity extends AppCompatActivity {
             if (location != null) {
                 String longitud = String.valueOf(location.getLongitude());
                 String latitud = String.valueOf(location.getLatitude());
-                contacto.setLongitud(longitud);
-                contacto.setLatitud(latitud);
+                contactoBuscado.setLongitud(longitud);
+                contactoBuscado.setLatitud(latitud);
                 txtLongitud.setText(longitud);
                 txtLatitud.setText(latitud);
             }
         }
     }
 
+    private void mostrarDialogoGPSInactivo() {
+        new AlertDialog.Builder(this)
+                .setTitle("Activación de GPS")
+                .setMessage("Debe activar la ubicación de su dispositivo para acceder a todas las funciones")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
 
     //FUNCIONES RELACIONADAS AL GUARDADO DEL CONTACTO Y MENSAJES DE ERROR
-    private void agregarContacto() {
+    private void actualizarContacto() {
         int comprobaciones = 0;
         int numeros = 0;
-        if(txtNombreContacto.getText().toString().isEmpty() || txtTelefonoContacto.getText().toString().isEmpty()) {
+        if(txtNombre.getText().toString().isEmpty() || txtTelefono.getText().toString().isEmpty()) {
             mostrarDialogoVacios();
             comprobaciones = 1;
         }
 
-        if(contacto.getFoto() == "" && comprobaciones == 0) {
+        if(contactoBuscado.getFoto() == "" && comprobaciones == 0) {
             mostrarDialogoImagenNoTomada();
             comprobaciones = 1;
         }
 
-        if((contacto.getLatitud() == "" || contacto.getLongitud() == "") && comprobaciones == 0) {
+        if((contactoBuscado.getLatitud() == "" || contactoBuscado.getLongitud() == "") && comprobaciones == 0) {
             mostrarDialogoLocalizacionNoEncontrada();
             comprobaciones = 1;
         }
 
         if(comprobaciones == 0) {
-            for (int i = 0; i < txtNombreContacto.getText().toString().length(); i++) {
-                if (Character.isDigit(txtNombreContacto.getText().toString().charAt(i))) {
+            for (int i = 0; i < txtNombre.getText().toString().length(); i++) {
+                if (Character.isDigit(txtNombre.getText().toString().charAt(i))) {
                     mostrarDialogoNumeros();
                     numeros = 1;
                     break;
@@ -237,18 +293,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (numeros == 0) {
-                contacto.setNombre(txtNombreContacto.getText().toString());
-                contacto.setTelefono(txtTelefonoContacto.getText().toString());
+                contactoBuscado.setNombre(txtNombre.getText().toString());
+                contactoBuscado.setTelefono(txtTelefono.getText().toString());
                 JSONObject object = new JSONObject();
-                String url = "http://18.116.112.28:1880/api/contacto/create";
+                String url = RestApiMethods.ApiUpdateUrl;
                 try
                 {
-                    object.put("nombre",contacto.getNombre());
-                    object.putOpt("telefono",contacto.getTelefono());
-                    object.putOpt("latitud",contacto.getLatitud());
-                    object.putOpt("longitud",contacto.getLongitud());
-                    object.putOpt("foto",contacto.getFoto());
-                    object.putOpt("archivo",contacto.getArchivo());
+                    object.put("id",contactoBuscado.getId());
+                    object.put("nombre",contactoBuscado.getNombre());
+                    object.putOpt("telefono",contactoBuscado.getTelefono());
+                    object.putOpt("latitud",contactoBuscado.getLatitud());
+                    object.putOpt("longitud",contactoBuscado.getLongitud());
+                    object.putOpt("foto",contactoBuscado.getFoto());
+                    object.putOpt("archivo",contactoBuscado.getArchivo());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -267,35 +324,19 @@ public class MainActivity extends AppCompatActivity {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                Toast.makeText(getApplicationContext(),"Contacto Guardado",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Contacto Actualizado",Toast.LENGTH_LONG).show();
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Error", "Error: " + error.getMessage());
-                        Toast.makeText(MainActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityEdit.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
                 requestQueue.add(jsonObjectRequest);
-                ClearScreen();
             }
         }
-    }
-
-    private void ClearScreen() {
-        byteArray = new byte[0];
-        imgFoto.setImageResource(R.mipmap.ic_launcher_round);
-        contacto.setNombre("");
-        contacto.setTelefono("");
-        contacto.setLatitud("");
-        contacto.setLongitud("");
-        contacto.setFoto("");
-        contacto.setArchivo("");
-        txtNombreContacto.setText("");
-        txtTelefonoContacto.setText("");
-        txtLatitud.setText("");
-        txtLongitud.setText("");
     }
 
     private void mostrarDialogoVacios() {
@@ -326,18 +367,6 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Alerta de Localización")
                 .setMessage("No se ha encontrado su localización")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                }).show();
-    }
-
-    private void mostrarDialogoGPSInactivo() {
-        new AlertDialog.Builder(this)
-                .setTitle("Activación de GPS")
-                .setMessage("Debe activar la ubicación de su dispositivo para acceder a todas las funciones")
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityActualizar">
+    tools:context=".ActivityEdit">
 
 
     <ScrollView
@@ -30,15 +30,16 @@
                 android:layout_width="128dp"
                 android:layout_height="53dp"
                 android:layout_marginLeft="138dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/imgFoto2"
+                app:layout_constraintBottom_toTopOf="@+id/imgFoto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/logo" />
 
             <ImageView
-                android:id="@+id/imgFoto2"
+                android:id="@+id/imgFoto"
                 android:layout_width="145dp"
                 android:layout_height="140dp"
                 android:layout_marginStart="133dp"
@@ -62,13 +63,13 @@
                 app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgFoto2" />
+                app:layout_constraintTop_toBottomOf="@+id/imgFoto" />
 
             <TextView
                 android:id="@+id/lblNombre2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="170dp"
+                android:layout_marginLeft="40dp"
                 android:layout_marginTop="-20dp"
                 android:layout_marginBottom="9dp"
                 android:text="Nombre:"
@@ -96,7 +97,7 @@
                 android:id="@+id/lblTelefono2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="170dp"
+                android:layout_marginLeft="40dp"
                 android:layout_marginTop="-5dp"
                 android:layout_marginBottom="9dp"
                 android:text="Teléfono:"
@@ -121,39 +122,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/label" />
 
             <TextView
-                android:id="@+id/lblLongitud2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="170dp"
-                android:layout_marginTop="-5dp"
-                android:layout_marginBottom="9dp"
-                android:text="Longitud:"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/txtLongitudContacto2"
-                android:layout_width="317dp"
-                android:layout_height="46dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginBottom="10dp"
-                android:ems="10"
-                android:hint="Ingrese la longitud del contacto"
-                android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/label2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label" />
-
-            <TextView
                 android:id="@+id/lblLatitud2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="170dp"
-                android:layout_marginTop="-5dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginBottom="9dp"
                 android:text="Latitud:"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -164,25 +137,69 @@
 
             <EditText
                 android:id="@+id/txtLatitudContacto2"
-                android:layout_width="317dp"
-                android:layout_height="46dp"
-                android:layout_marginLeft="40dp"
+                android:layout_width="246dp"
+                android:layout_height="26dp"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop="-30dp"
                 android:layout_marginBottom="10dp"
                 android:ems="10"
-                android:hint="Ingrese la latitud del contacto"
                 android:inputType="textPersonName"
+                app:layout_constraintBottom_toTopOf="@+id/label2"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@null"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label" />
+
+            <TextView
+                android:id="@+id/lblLongitud2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="9dp"
+                android:text="Longitud:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/txtLongitudContacto2"
+                android:layout_width="246dp"
+                android:layout_height="26dp"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop="-30dp"
+                android:layout_marginBottom="10dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:background="@null"
                 app:layout_constraintBottom_toTopOf="@+id/label2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/label" />
 
             <Button
-                android:id="@+id/btnActualizarContacto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="95dp"
+                android:id="@+id/btnActualizar"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="5dp"
                 android:backgroundTint="#2B8A1B"
-                android:text="Actualizar Contacto"
+                android:text="Actualizar"
+                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtLongitud" />
+
+            <Button
+                android:id="@+id/btnEliminar"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="205dp"
+                android:layout_marginTop="-50dp"
+                android:backgroundTint="#C81D11"
+                android:text="Eliminar"
                 app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -193,7 +210,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="160dp"
-                android:backgroundTint="#2B8A1B"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="#2778CD"
                 android:text="Volver"
                 app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
                 app:layout_constraintEnd_toEndOf="parent"

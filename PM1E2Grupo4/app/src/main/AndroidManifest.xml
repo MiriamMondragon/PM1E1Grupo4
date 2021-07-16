@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.per.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PM1E2Grupo4"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ActivityActualizar"></activity>
+        <activity android:name=".ActivityEdit"></activity>
         <activity android:name=".ActivityListContactos" />
         <activity android:name=".MainActivity">
             <intent-filter>

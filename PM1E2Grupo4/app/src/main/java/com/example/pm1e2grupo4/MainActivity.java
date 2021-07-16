@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 contacto.setNombre(txtNombreContacto.getText().toString());
                 contacto.setTelefono(txtTelefonoContacto.getText().toString());
                 JSONObject object = new JSONObject();
-                String url = "http://18.116.112.28:1880/api/contacto/create";
+                String url = RestApiMethods.ApiPostUrl;
                 try
                 {
                     object.put("nombre",contacto.getNombre());

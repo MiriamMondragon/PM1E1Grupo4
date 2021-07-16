@@ -72,7 +72,7 @@ public class ActivityListContactos extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(idCont != null){
-                    Intent pantallaActualizar = new Intent(getApplicationContext(), ActivityActualizar.class);
+                    Intent pantallaActualizar = new Intent(getApplicationContext(), ActivityEdit.class);
                     pantallaActualizar.putExtra("idCont", String.valueOf(idCont));
                     startActivity(pantallaActualizar);
                 }else{

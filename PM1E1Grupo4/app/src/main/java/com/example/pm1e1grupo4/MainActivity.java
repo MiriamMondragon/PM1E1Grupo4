@@ -15,8 +15,10 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +28,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     EditText txtNombreContacto, txtTelefonoContacto;
     TextView txtLatitud, txtLongitud;
 
-    Contacto contacto = new Contacto();
+    Contacto contacto;
     byte[] byteArray;
 
     @Override
@@ -56,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         Button btnTomarFoto = (Button) findViewById(R.id.btnTomarFoto);
         Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
         Button btnListarContactos = (Button) findViewById(R.id.btnListarContactos);
+        contacto = new Contacto("","","","","","");
+        checkGPS();
 
         //BOTON TOMAR FOTO
         btnTomarFoto.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                permisos();
+                agregarContacto();
             }
         });
 
@@ -92,6 +108,13 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PETICION_ACCESO_PERMISOS);
         } else {
             tomarFoto();
+        }
+    }
+
+    private void checkGPS(){
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        if(!provider.contains("gps")){
+            mostrarDialogoGPSInactivo();
         }
     }
 
@@ -184,9 +207,91 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     //FUNCIONES RELACIONADAS AL GUARDADO DEL CONTACTO Y MENSAJES DE ERROR
+    private void agregarContacto() {
+        int comprobaciones = 0;
+        int numeros = 0;
+        if(txtNombreContacto.getText().toString().isEmpty() || txtTelefonoContacto.getText().toString().isEmpty()) {
+            mostrarDialogoVacios();
+            comprobaciones = 1;
+        }
+
+        if(contacto.getFoto() == "" && comprobaciones == 0) {
+            mostrarDialogoImagenNoTomada();
+            comprobaciones = 1;
+        }
+
+        if((contacto.getLatitud() == "" || contacto.getLongitud() == "") && comprobaciones == 0) {
+            mostrarDialogoLocalizacionNoEncontrada();
+            comprobaciones = 1;
+        }
+
+        if(comprobaciones == 0) {
+            for (int i = 0; i < txtNombreContacto.getText().toString().length(); i++) {
+                if (Character.isDigit(txtNombreContacto.getText().toString().charAt(i))) {
+                    mostrarDialogoNumeros();
+                    numeros = 1;
+                    break;
+                }
+            }
+
+            if (numeros == 0) {
+                contacto.setNombre(txtNombreContacto.getText().toString());
+                contacto.setTelefono(txtTelefonoContacto.getText().toString());
+                JSONObject object = new JSONObject();
+                String url = "http://18.116.112.28:1880/api/contacto/create";
+                try
+                {
+                    object.put("nombre",contacto.getNombre());
+                    object.putOpt("telefono",contacto.getTelefono());
+                    object.putOpt("latitud",contacto.getLatitud());
+                    object.putOpt("longitud",contacto.getLongitud());
+                    object.putOpt("foto",contacto.getFoto());
+                    object.putOpt("archivo",contacto.getArchivo());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, object,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    Log.d("JSON", String.valueOf(response));
+                                    String Error = response.getString("httpStatus");
+                                    if (Error.equals("")||Error.equals(null)){
+                                    }else if(Error.equals("OK")){
+                                        JSONObject body = response.getJSONObject("body");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Toast.makeText(getApplicationContext(),"Contacto Guardado",Toast.LENGTH_LONG).show();
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("Error", "Error: " + error.getMessage());
+                        Toast.makeText(MainActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                requestQueue.add(jsonObjectRequest);
+                ClearScreen();
+            }
+        }
+    }
 
     private void ClearScreen() {
+        byteArray = new byte[0];
+        imgFoto.setImageResource(R.mipmap.ic_launcher_round);
+        contacto.setNombre("");
+        contacto.setTelefono("");
+        contacto.setLatitud("");
+        contacto.setLongitud("");
+        contacto.setFoto("");
+        contacto.setArchivo("");
         txtNombreContacto.setText("");
         txtTelefonoContacto.setText("");
         txtLatitud.setText("");
@@ -197,6 +302,42 @@ public class MainActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Alerta de Vacíos")
                 .setMessage("No puede dejar ningún campo vacío")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
+    private void mostrarDialogoImagenNoTomada() {
+        new AlertDialog.Builder(this)
+                .setTitle("Alerta de Fotografía")
+                .setMessage("No se ha tomado ninguna fotografía")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
+    private void mostrarDialogoLocalizacionNoEncontrada() {
+        new AlertDialog.Builder(this)
+                .setTitle("Alerta de Localización")
+                .setMessage("No se ha encontrado su localización")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
+    private void mostrarDialogoGPSInactivo() {
+        new AlertDialog.Builder(this)
+                .setTitle("Activación de GPS")
+                .setMessage("Debe activar la ubicación de su dispositivo para acceder a todas las funciones")
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -216,4 +357,5 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).show();
     }
+
 }

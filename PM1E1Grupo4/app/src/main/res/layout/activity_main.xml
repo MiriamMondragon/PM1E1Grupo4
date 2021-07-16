@@ -96,7 +96,7 @@
         android:layout_marginBottom="9dp"
         android:ems="10"
         android:hint="Ingrese el teléfono del contacto"
-        android:inputType="textPersonName"
+        android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/label5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

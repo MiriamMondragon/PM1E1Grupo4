@@ -1,6 +1,7 @@
 package com.example.pm1e1grupo4;
 
 public class Contacto {
+    private String id;
     private String nombre;
     private String telefono;
     private String latitud;

@@ -251,18 +251,6 @@ public class ActivityEdit extends AppCompatActivity {
         }
     }
 
-    private void mostrarDialogoGPSInactivo() {
-        new AlertDialog.Builder(this)
-                .setTitle("Activación de GPS")
-                .setMessage("Debe activar la ubicación de su dispositivo para acceder a todas las funciones")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                }).show();
-    }
-
 
     //FUNCIONES RELACIONADAS AL GUARDADO DEL CONTACTO Y MENSAJES DE ERROR
     private void actualizarContacto() {

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -62,7 +63,14 @@ public class ActivityListContactos extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(idCont != null){
-                    ubicacionContacto();
+                    //ubicacionContacto();
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q="+latitud+","+longitud);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+
+                    if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
                 }else{
                     mostrarDialogoSeleccion();
                 }

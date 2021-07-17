@@ -20,7 +20,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -65,15 +64,15 @@ public class ActivityEdit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        Button btnVolver2 = (Button) findViewById(R.id.btnVolver2);
-        Button btnActualizarFoto = (Button) findViewById(R.id.btnActualizarFoto);
-        Button btnActualizar = (Button) findViewById(R.id.btnActualizar);
+        Button btnVolver2 = (Button) findViewById(R.id.btnListarContactos2);
+        Button btnActualizarFoto = (Button) findViewById(R.id.btnTomarFoto2);
+        Button btnActualizar = (Button) findViewById(R.id.btnGuardar2);
         Button btnEliminar = (Button) findViewById(R.id.btnEliminar);
         txtNombre = (EditText) findViewById(R.id.txtNombreContacto2);
         txtTelefono = (EditText) findViewById(R.id.txtTelefonoContacto2);
-        imgFoto2 = (ImageView) findViewById(R.id.imgFoto);
-        txtLongitud = (TextView) findViewById(R.id.txtLatitudContacto2);
-        txtLatitud = (TextView) findViewById(R.id.txtLongitudContacto2);
+        imgFoto2 = (ImageView) findViewById(R.id.imgFoto2);
+        txtLongitud = (TextView) findViewById(R.id.txtLongitud2);
+        txtLatitud = (TextView) findViewById(R.id.txtLatitud2);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("idCont");
@@ -90,6 +89,13 @@ public class ActivityEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 actualizarContacto();
+            }
+        });
+
+        btnEliminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eliminarContacto();
             }
         });
 
@@ -371,6 +377,44 @@ public class ActivityEdit extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+                }).show();
+    }
+
+    private void eliminarContacto() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmación de Eliminación")
+                .setMessage("¿Desea eliminar el contacto de " + txtNombre.getText() + "?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        RequestQueue queue = Volley.newRequestQueue(ActivityEdit.this);
+                        String url = RestApiMethods.ApiDeleteUrl + id;
+                        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
+                            @Override
+                            public void onResponse(String response) {
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.i("Error en Response", "onResponse: " +  error.getMessage().toString() );
+                            }
+                        });
+                        // Add the request to the RequestQueue.
+                        queue.add(stringRequest);
+
+                        Toast.makeText(getApplicationContext(), "Dato Eliminado", Toast.LENGTH_LONG).show();
+                        Intent pantallaRegresoList = new Intent(getApplicationContext(), ActivityListContactos.class);
+                        startActivity(pantallaRegresoList);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getApplicationContext(), "Se canceló la eliminación", Toast.LENGTH_LONG).show();
                     }
                 }).show();
     }

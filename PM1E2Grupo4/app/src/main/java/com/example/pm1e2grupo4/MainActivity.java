@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imgFoto = (ImageView) findViewById(R.id.imgFoto2);
+        imgFoto = (ImageView) findViewById(R.id.imgFoto);
         txtNombreContacto = (EditText) findViewById(R.id.txtNombreContacto);
         txtTelefonoContacto = (EditText) findViewById(R.id.txtTelefonoContacto);
         txtLatitud = (TextView) findViewById(R.id.txtLatitud);
         txtLongitud = (TextView) findViewById(R.id.txtLongitud);
         Button btnTomarFoto = (Button) findViewById(R.id.btnTomarFoto);
-        Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
+        Button btnSalvar = (Button) findViewById(R.id.btnGuardar);
         Button btnListarContactos = (Button) findViewById(R.id.btnListarContactos);
         contacto = new Contacto("","","","","","", "");
         checkGPS();
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 contacto.setNombre(txtNombreContacto.getText().toString());
                 contacto.setTelefono(txtTelefonoContacto.getText().toString());
                 JSONObject object = new JSONObject();
-                String url = RestApiMethods.ApiPostUrl;
+                String url = RestApiMethods.ApiCreateUrl;
                 try
                 {
                     object.put("nombre",contacto.getNombre());

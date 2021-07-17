@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,44 +26,44 @@
 
 
             <ImageView
-                android:id="@+id/logo"
+                android:id="@+id/logo2"
                 android:layout_width="128dp"
                 android:layout_height="53dp"
-                android:layout_marginLeft="138dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginLeft="130dp"
+                android:layout_marginTop="70dp"
                 android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/imgFoto"
+                app:layout_constraintBottom_toTopOf="@+id/imgFoto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/logo" />
 
             <ImageView
-                android:id="@+id/imgFoto"
+                android:id="@+id/imgFoto2"
                 android:layout_width="145dp"
                 android:layout_height="140dp"
-                android:layout_marginStart="133dp"
+                android:layout_marginStart="122dp"
                 android:layout_marginEnd="133dp"
                 android:layout_marginBottom="9dp"
-                app:layout_constraintBottom_toTopOf="@+id/btnActualizarFoto"
+                app:layout_constraintBottom_toTopOf="@+id/btnTomarFoto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo"
+                app:layout_constraintTop_toBottomOf="@+id/logo2"
                 app:srcCompat="@mipmap/ic_launcher"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <Button
-                android:id="@+id/btnActualizarFoto"
+                android:id="@+id/btnTomarFoto2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
                 android:layout_marginBottom="33dp"
                 android:backgroundTint="#2B8A1B"
                 android:text="Actualizar Fotografía"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imgFoto" />
+                app:layout_constraintTop_toBottomOf="@+id/imgFoto2" />
 
             <TextView
                 android:id="@+id/lblNombre2"
@@ -74,7 +74,7 @@
                 android:layout_marginBottom="9dp"
                 android:text="Nombre:"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -88,10 +88,10 @@
                 android:ems="10"
                 android:hint="Ingrese el nombre del contacto"
                 android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/label2"
+                app:layout_constraintBottom_toTopOf="@+id/label3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label" />
+                app:layout_constraintTop_toBottomOf="@+id/label4" />
 
             <TextView
                 android:id="@+id/lblTelefono2"
@@ -102,7 +102,7 @@
                 android:layout_marginBottom="9dp"
                 android:text="Teléfono:"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -116,56 +116,27 @@
                 android:ems="10"
                 android:hint="Ingrese el teléfono del contacto"
                 android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/label2"
+                app:layout_constraintBottom_toTopOf="@+id/label3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label" />
-
-            <TextView
-                android:id="@+id/lblLatitud2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="9dp"
-                android:text="Latitud:"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/txtLatitudContacto2"
-                android:layout_width="246dp"
-                android:layout_height="26dp"
-                android:layout_marginLeft="110dp"
-                android:layout_marginTop="-30dp"
-                android:layout_marginBottom="10dp"
-                android:background="@null"
-                android:ems="10"
-                android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/label2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label" />
+                app:layout_constraintTop_toBottomOf="@+id/labe4" />
 
             <TextView
                 android:id="@+id/lblLongitud2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginBottom="9dp"
                 android:text="Longitud:"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/txtLongitudContacto2"
+                android:id="@+id/txtLongitud2"
                 android:layout_width="246dp"
                 android:layout_height="26dp"
                 android:layout_marginLeft="110dp"
@@ -174,23 +145,52 @@
                 android:background="@null"
                 android:ems="10"
                 android:inputType="textPersonName"
-                app:layout_constraintBottom_toTopOf="@+id/label2"
+                app:layout_constraintBottom_toTopOf="@+id/label3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/label" />
+                app:layout_constraintTop_toBottomOf="@+id/label4" />
+
+            <TextView
+                android:id="@+id/lblLatitud2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="9dp"
+                android:text="Latitud:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                app:layout_constraintBottom_toTopOf="@+id/txtNombreContacto2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/txtLatitud2"
+                android:layout_width="246dp"
+                android:layout_height="26dp"
+                android:layout_marginLeft="110dp"
+                android:layout_marginTop="-30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@null"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintBottom_toTopOf="@+id/label3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label4" />
 
             <Button
-                android:id="@+id/btnActualizar"
+                android:id="@+id/btnGuardar2"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="35dp"
                 android:layout_marginTop="5dp"
                 android:backgroundTint="#2B8A1B"
                 android:text="Actualizar"
-                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
+                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLongitud" />
+                app:layout_constraintTop_toBottomOf="@+id/txtLongitud2" />
 
             <Button
                 android:id="@+id/btnEliminar"
@@ -200,23 +200,23 @@
                 android:layout_marginTop="-50dp"
                 android:backgroundTint="#C81D11"
                 android:text="Eliminar"
-                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
+                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLongitud" />
+                app:layout_constraintTop_toBottomOf="@+id/txtLongitud2" />
 
             <Button
-                android:id="@+id/btnVolver2"
+                android:id="@+id/btnListarContactos2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="160dp"
+                android:layout_marginLeft="150dp"
                 android:layout_marginTop="5dp"
                 android:backgroundTint="#2778CD"
                 android:text="Volver"
-                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos"
+                app:layout_constraintBottom_toTopOf="@+id/btnListarContactos2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLongitud" />
+                app:layout_constraintTop_toBottomOf="@+id/txtLongitud2" />
 
         </LinearLayout>
 

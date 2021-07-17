@@ -5,13 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,16 +23,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 import com.android.volley.*;
 import com.android.volley.toolbox.*;
 
 public class ActivityListContactos extends AppCompatActivity {
 
-    private String idCont, nombre;
+    private String idCont, nombre, telefono, longitud, latitud;
     ListView lstContactos;
-    List<Contacto> cantactoList;
     ArrayList<String> arrayListContactos;
+    ArrayList<FotografiaContacto> listadoContactos;
     ArrayList<Contacto> lista;
     EditText txtBuscar;
 
@@ -40,11 +40,12 @@ public class ActivityListContactos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_contactos);
         lstContactos = findViewById(R.id.lstContactos);
-        cantactoList = new ArrayList<>();
         arrayListContactos = new ArrayList<String>();
+        listadoContactos = new ArrayList<>();;
         txtBuscar = (EditText) findViewById(R.id.txtBuscar);
-        Button btnVolver = (Button) findViewById(R.id.btnVolver2);
-        Button btnActualizar = (Button) findViewById(R.id.btnActualizar);
+        Button btnVolver = (Button) findViewById(R.id.btnVolver);
+        Button btnActualizar = (Button) findViewById(R.id.btnEditar);
+        Button btnUbicacion = (Button) findViewById(R.id.btnUbicacion);
 
         //LISTA DE CONTACTOS
         SendRequest();
@@ -57,11 +58,25 @@ public class ActivityListContactos extends AppCompatActivity {
             }
         });
 
+        btnUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(idCont != null){
+                    ubicacionContacto();
+                }else{
+                    mostrarDialogoSeleccion();
+                }
+            }
+        });
+
         lstContactos.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id){
                 idCont = lista.get(position).getId();
                 nombre = lista.get(position).getNombre();
+                telefono = lista.get(position).getTelefono();
+                longitud = lista.get(position).getLongitud();
+                latitud = lista.get(position).getLatitud();
 
                 Toast.makeText(getApplicationContext(), "Ha seleccionado a: "+nombre, Toast.LENGTH_LONG).show();
             }
@@ -85,59 +100,60 @@ public class ActivityListContactos extends AppCompatActivity {
 
     private void SendRequest(){
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = RestApiMethods.ApiGetDatos;
+        String url = RestApiMethods.ApiGetUrl;
         lista = new ArrayList<Contacto>();
 
-        // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        // Log.i("Respuesta", "onResponse: " + response.substring(0,500) );
-                        try {
-                            JSONObject obj = new JSONObject(response);
-                            JSONArray ContactoArray = obj.getJSONArray("Contactos");
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    JSONArray ContactoArray = obj.getJSONArray("Contactos");
 
-                            for (int i = 0; i < ContactoArray.length(); i++) {
-                                //getting the json object of the particular index inside the array
-                                JSONObject contactoObject = ContactoArray.getJSONObject(i);
+                    for (int i = 0; i < ContactoArray.length(); i++) {
+                        JSONObject contactoObject = ContactoArray.getJSONObject(i);
 
-                                //creating a hero object and giving them the values from json object
-                                Contacto contact = new Contacto(contactoObject.getString("ID"),
-                                        contactoObject.getString("NOMBRE"),
-                                        contactoObject.getString("TELEFONO"),
-                                        contactoObject.getString("LATITUD"),
-                                        contactoObject.getString("LONGITUD"),
-                                        "",
-                                        contactoObject.getString("ARCHIVO"));
+                        Contacto contact = new Contacto(contactoObject.getString("ID"),
+                                contactoObject.getString("NOMBRE"),
+                                contactoObject.getString("TELEFONO"),
+                                contactoObject.getString("LATITUD"),
+                                contactoObject.getString("LONGITUD"),
+                                contactoObject.getString("FOTO"),
+                                contactoObject.getString("ARCHIVO"));
 
-                                //adding the hero to herolist
-                                lista.add(contact);
-                                cantactoList.add(contact);
-                                arrayListContactos.add(contact.getNombre());
-                            }
-                            ArrayAdapter adp = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1, arrayListContactos );
-                            lstContactos.setAdapter(adp);
+                        lista.add(contact);
+                        arrayListContactos.add(contact.getNombre());
 
-                            //BUSCADOR
-                            txtBuscar.addTextChangedListener(new TextWatcher() {
-                                @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                }
-                                @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                    adp.getFilter().filter(s);
-                                }
-                                @Override
-                                public void afterTextChanged(Editable s) {
-                                }
-                            });
-
-                        } catch (JSONException ex) {
-                            Toast.makeText(getApplicationContext(), "ERROR CON ESTA MIERDA", Toast.LENGTH_LONG).show();
-                        }
+                        byte[] foto = Base64.decode(contact.getFoto().getBytes(), Base64.DEFAULT);
+                        FotografiaContacto fotografia = new FotografiaContacto(BitmapFactory.decodeByteArray(foto, 0, foto.length), contact.getNombre());
+                        fotografia.setId(contact.getId());
+                        fotografia.setLongitud(contact.getLongitud());
+                        fotografia.setLatitud(contact.getLatitud());
+                        listadoContactos.add(fotografia);
                     }
-                }, new Response.ErrorListener() {
+                    Adaptador adp = new Adaptador(getApplicationContext(), R.layout.imgtxt_view_items, listadoContactos );
+                    lstContactos.setAdapter(adp);
+
+                    //BUSCADOR
+                    txtBuscar.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            adp.filtrar(txtBuscar.getText().toString());
+                            lista = adp.filtrarListado(txtBuscar.getText().toString());
+                        }
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                        }
+                    });
+
+                } catch (JSONException ex) {
+                    Toast.makeText(getApplicationContext(), "ERROR", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i("Error en Response", "onResponse: " +  error.getMessage().toString() );
@@ -158,4 +174,29 @@ public class ActivityListContactos extends AppCompatActivity {
                     }
                 }).show();
     }
+
+    private void ubicacionContacto() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmación de ver Ubicación")
+                .setMessage("¿Desea ver la ubicación del contacto de " + nombre + "?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        Intent pantallaUbicacion = new Intent(getApplicationContext(), ActivityMaps.class);
+                        pantallaUbicacion.putExtra("idCont", String.valueOf(idCont));
+                        pantallaUbicacion.putExtra("nombre", String.valueOf(nombre));
+                        pantallaUbicacion.putExtra("longitud", String.valueOf(longitud));
+                        pantallaUbicacion.putExtra("latitud", String.valueOf(latitud));
+                        startActivity(pantallaUbicacion);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getApplicationContext(), "Se canceló ver ubicación", Toast.LENGTH_LONG).show();
+                    }
+                }).show();
+    }
+
 }
